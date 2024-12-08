@@ -4,7 +4,7 @@ import { MdNotListedLocation } from "react-icons/md";
 
 
 
-const db = getFirestore(app)
+export const db = getFirestore(app)
 
 
 export const addUserData = async (obj, setMessage, message) => {

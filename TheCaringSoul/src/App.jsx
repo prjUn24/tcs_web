@@ -3,11 +3,14 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './index.css'
 
-function App() {
-  const [count, setCount] = useState(0)
 
+import Routers from './Pages/Routers'
+
+function App() {
   return (
     <>
+
+    <Routers/>
      
     </>
   )
