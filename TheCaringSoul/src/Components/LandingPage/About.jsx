@@ -49,9 +49,9 @@ export default function About() {
           className="absolute bottom-0 right-16 w-40 hidden lg:block"
         />
         <div className="box-container  justify-center items-center p-16 gap-7 flex-wrap hidden md:grid grid-cols-2 grid-rows-2 justify-items-center lg:flex">
-          {aboutCard.map((item) => {
+          {aboutCard.map((item, id) => {
             return (
-              <div
+              <div key={id}
                 style={{ height: "312px", width: "387px" }}
                 className="box cursor-pointer group relative bg-[#FFF6FD] flex justify-center items-center border border-solid border-[#B5B5B5] rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:border-none"
               >

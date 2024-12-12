@@ -1,11 +1,32 @@
-import React from "react";
-import image from "../../assets/image.png";
+
+import React, { useEffect, useState } from 'react'
+import image from  "../../assets/image.png"
+
 
 import { FaArrowRightLong } from "react-icons/fa6";
 
 export default function Home() {
+
+  const [height, setHeight] = useState(window.innerHeight)
+
+
+  useEffect(()=>{
+     window.addEventListener('resize',()=>{
+      setHeight(height)
+     })
+
+
+     return()=>{
+      window.removeEventListener('resize', ()=>{
+            setHeight(height)
+      })
+     }
+  },[height])
+
+  
   return (
-    <div className=" h-screen relative w-full     bg-amour p-1">
+
+    <div className={`lg:h-screen  h-[${height}px]  relative w-full     bg-amour p-1`}>
       <div className="absolute  lg:flex hidden top-[60px] right-0">
         {" "}
         <svg
@@ -34,6 +55,7 @@ export default function Home() {
               Compassionate Care, <br />
               Right at Your Doorstep
             </div>
+
 
             <div className="relative hidden xl:flex -mt-12">
               <div className="w-96 absolute z-30 right-12  -top-3 ">
