@@ -6,11 +6,11 @@ import Navbar from "./Navbar";
 export default function MainContainer() {
   return (
     <div className="relative">
-      {/* <Navbar /> */}
-      {/* <Home /> */}
-      {/* <About /> */}
+      <Navbar />
+      <Home />
+      <About />
       <FAQ />
-      {/* <Home /> */}
+     
     </div>
   );
 }
