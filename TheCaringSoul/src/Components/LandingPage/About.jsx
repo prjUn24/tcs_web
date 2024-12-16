@@ -1,3 +1,5 @@
+import AOS from "aos";
+import "aos/dist/aos.css";
 import React from "react";
 import about_img from "../../assets/About/about-sm.png";
 import logo1 from "../../assets/About/logo1.png";
@@ -6,6 +8,11 @@ import logo3 from "../../assets/About/logo3.png";
 import tick from "../../assets/About/tick-icon.png";
 import vector_heart2 from "../../assets/About/vector-heart-2.png";
 import vector_heart1 from "../../assets/About/vector-heart1.png";
+
+AOS.init({
+  duration: 1000, // Animation duration (1s)
+  once: true, // Animations run only once
+});
 
 export default function About() {
   const aboutCard = [
@@ -42,11 +49,13 @@ export default function About() {
           src={vector_heart1}
           alt="Heart"
           className="absolute top-0 left-16 w-40 hidden lg:block"
+          data-aos="fade-down" /* Scroll animation from top */
         />
         <img
           src={vector_heart2}
           alt="Heart"
           className="absolute bottom-0 right-16 w-40 hidden lg:block"
+          data-aos="fade-up" /* Scroll animation from bottom */
         />
         <div className="box-container  justify-center items-center p-16 gap-7 flex-wrap hidden md:grid grid-cols-2 grid-rows-2 justify-items-center lg:flex">
           {aboutCard.map((item) => {
@@ -55,7 +64,7 @@ export default function About() {
                 style={{ height: "312px", width: "387px" }}
                 className="box cursor-pointer group relative bg-[#FFF6FD] flex justify-center items-center border border-solid border-[#B5B5B5] rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:border-none"
               >
-                <div className="absolute flex flex-col justify-center items-center gap-8 transition-opacity duration-300 opacity-100 group-hover:opacity-0 delay-300">
+                <div className="absolute flex flex-col justify-center items-center gap-8 transition-opacity duration-1000 ease-in-out opacity-100 group-hover:opacity-0">
                   <div className="logo" style={{ width: "74px" }}>
                     <img
                       src={item.logo}
@@ -66,7 +75,7 @@ export default function About() {
                   <p className="text-xl font-bold">{item.title}</p>
                 </div>
 
-                <div className="absolute hover-content flex flex-col gap-3 p-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100 delay-150">
+                <div className="absolute hover-content flex flex-col gap-3 p-4 transition-opacity duration-1000 ease-in-out opacity-0 group-hover:opacity-100">
                   <h1 className="text-xl font-bold">{item.title}</h1>
                   <p>{item.desc}</p>
                 </div>
@@ -83,7 +92,11 @@ export default function About() {
         >
           {/*About Image*/}
           <div className="w-3/5 flex justify-center items-center">
-            <img src={about_img} alt="About Image"style={{ width: "700px", minWidth: "430px"}}/>
+            <img
+              src={about_img}
+              alt="About Image"
+              style={{ width: "700px", minWidth: "430px" }}
+            />
           </div>
           {/*About Desc*/}
           <div className="md:text-center lg:text-left">
@@ -132,7 +145,7 @@ export default function About() {
               </div>
             </div>
             <div className="md:flex justify-start">
-            {/* <button className="bg-[#567A9B] text-white py-2 px-4 mt-2 rounded-md">More Info</button> */}
+              {/* <button className="bg-[#567A9B] text-white py-2 px-4 mt-2 rounded-md">More Info</button> */}
             </div>
           </div>
         </div>

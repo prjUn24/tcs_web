@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@typescript-eslint/utils": "^8.17.0",
+    "aos": "^2.3.4",
     "daisyui": "^4.12.14",
     "firebase": "^11.0.2",
     "js-cookie": "^3.0.5",
