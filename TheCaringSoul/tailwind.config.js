@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        proxima: ['Proxima Nova', 'sans-serif'],
+    },
       colors: {
         amour: '#f8e8f5',
         cloudbyblue: '#bdcfe7',
