@@ -10,6 +10,7 @@ export default function MainContainer() {
       <Home />
       <About />
       <Services />
+      <FAQ />
     </div>
   );
 }
