@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
 import logo from "../../assets/logo.png"
+import { useNavigate } from "react-router-dom"
 
 
 export default function Navbar(){
+  const navigate = useNavigate()
     return (
       <div className="navbar z-10 absolute top-0 bg-opal/20 uppercase font-medium text-black/70">
   <div className="navbar-start w-full ml-6 lg:w-36">
@@ -45,7 +47,7 @@ export default function Navbar(){
     </div>
     <div className="flex-row lg:flex hidden gap-5 justify-center align-middle">
          <div className="self-center text-black/55 cursor-pointer" >contact us</div>
-         <div className="text-white font-extrabold cursor-pointer bg-buttoncolor p-2 self-center text-center w-28 rounded-full">log in</div>
+         <div onClick={()=>{navigate("/login")}} className="text-white font-extrabold cursor-pointer bg-buttoncolor p-2 self-center text-center w-28 rounded-full">log in</div>
     </div>
   </div>
 </div>

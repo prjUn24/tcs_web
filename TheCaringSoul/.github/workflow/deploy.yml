@@ -1,0 +1,32 @@
+name: Workflow for deploying to firebase
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  firebase-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo code
+        uses: actions/checkout@v3
+
+      - name: set node environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: install modules
+        run: npm install
+
+      - name: build 
+        run: npm run build
+
+      - name: firebase deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0.9.0
+        with:
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: caringsouls-62376 

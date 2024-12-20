@@ -18,7 +18,8 @@ export default function ServiceContainer() {
     months: '',
     caregivergender: '',
     language: '',
-    otpsent: false,
+    otpsent: true,
+    number: ''
   });
 
   const [availabilityClickedIndex, setAvailabilityClickedIndex] = useState(null);
@@ -50,11 +51,11 @@ export default function ServiceContainer() {
   return (
     <div className='hero lg:p-10 bg-amour/40 relative text-slateblue p-3 md:p-5 w-full justify-items-center font-medium'>
 
-      <img src={image} className='absolute top-2 left-6' alt="" />
-      <img src={image} className='absolute top-2/3 left-6' alt="" />
-      <img src={image} className='absolute -right-6 bottom-6' alt="" />
-      <img src={image} className='absolute -right-6 bottom-3/5' alt="" />
-      <form className='relative lg:w-3/5 w-full mt-24 z-20 p-2' onSubmit={handleForm}>
+      <img src={image} className='absolute top-2 left-6 w-16 h-16' alt="" />
+      <img src={image} className='absolute top-2/3 left-6 w-16 h-16' alt="" />
+      <img src={image} className='absolute -right-6 bottom-6 w-16 h-16' alt="" />
+      <img src={image} className='absolute -right-6 bottom-3/5 w-16 h-16' alt="" />
+      <form className='relative md:scale-110 lg:w-3/5 w-full md:mt-36 mt-24 z-20 p-2' onSubmit={handleForm}>
         <div className='border p-3 shadow-md bg-white/80 rounded-md'>
           <label className={`${loggedin.status ? 'text-black/60' : 'text-blacks'} font-semibold`}>
             Please Enter Your Name
@@ -180,7 +181,7 @@ export default function ServiceContainer() {
           </div>
         </div>
 
-        <div className='mt-12 border shadow-md bg-white/80 p-3 rounded-md'>
+        <div className='mt-12 border shadow-md bg-white/80 p-3 rounded-md p-5'>
           <label className='font-semibold'>Phone Verification</label>
           <p className='mt-4 p-3'>
             We&apos;ll send you a verification code via SMS to confirm your phone number.<br />
@@ -188,20 +189,43 @@ export default function ServiceContainer() {
           </p>
 
           <input
-            type="tel"
-            className='w-56 h-16 p-1 pl-2 text-center bg-amber-50/20 border border-gray-300 rounded active:border-gray-300 focus:outline-none focus:border-gray-400 focus:text-black'
-            pattern='\d{10}'
-            placeholder='Mobile Number'
-            value={formData.otp}
-            onChange={(e) => { setFormData({ ...formData, otp: e.target.value }) }}
-            required
-          />
+  type="tel"
+  className='w-56 ml-4 h-16 p-1 pl-2 text-center bg-amber-50/20 border border-gray-300 rounded active:border-gray-300 focus:outline-none focus:border-gray-400 focus:text-black'
+  pattern="^\d{10}$"
+  maxLength={10}
+  placeholder='Phone number'
+  value={formData.number}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 10) {
+      setFormData({ ...formData, number: value });
+    }
+  }}
+  required
+/>
 
-          <div className='p-5 pl-2'>
+          <div className='mt-4'>
             {formData.otpsent ? (
-              <div className='w-full flex flex-row gap-5'>
-                <div className='bg-green-400 text-white p-2 rounded pl-3 pr-3 cursor-pointer'>Resend Otp</div>
+              <div className='flex flex-col gap-3 w-full'>
+                  <input
+  type="tel"
+  className='w-56 h-16 ml-4 p-1 pl-2 text-center bg-amber-50/20 border border-gray-300 rounded active:border-gray-300 focus:outline-none focus:border-gray-400 focus:text-black'
+  pattern="^\d{4}$"
+  maxLength={4}
+  placeholder='OTP'
+  value={formData.otp}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 4) {
+      setFormData({ ...formData, otp: value });
+    }
+  }}
+  required
+/>
+              <div className='w-full flex p-5 flex-row gap-5'>
+                <div className='bg-green-400 text-white p-2 rounded pl-3 pr-3 cursor-pointer'>Resend otp</div>
                 <div className='bg-green-400 text-white p-2 rounded pl-3 pr-3 cursor-pointer' onClick={handleForm}>Submit</div>
+              </div>
               </div>
             ) : 
               <button className='bg-green-400 text-white p-2 rounded pl-3 pr-3'>Send Code</button>
