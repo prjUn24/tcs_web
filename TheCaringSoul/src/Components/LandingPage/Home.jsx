@@ -2,12 +2,15 @@
 import React, { useEffect, useState } from 'react'
 import image from  "../../assets/image.png"
 
+import { useNavigate } from 'react-router-dom';
+
 
 import { FaArrowRightLong } from "react-icons/fa6";
 
 export default function Home() {
 
   const [height, setHeight] = useState(window.innerHeight)
+  const navigate = useNavigate()
 
 
   useEffect(()=>{
@@ -78,7 +81,7 @@ export default function Home() {
           </div>
 
           <div className="mt-12 flex flex-col lg:flex-row text-center  items-center justify-center align-middle lg:w-96 lg:justify-start  gap-2">
-            <div className="flex flex-row justify-center align-middle gap-2 w-36 text-center bg-slateblue text-white  p-2 rounded-md cursor-pointer">
+            <div onClick={()=>{navigate("/book/service")}} className="flex flex-row justify-center align-middle gap-2 w-36 text-center bg-slateblue text-white  p-2 rounded-md cursor-pointer">
               Book Now <FaArrowRightLong className="self-center" />{" "}
             </div>
             <div className="flex-inline w-36 text-center text-slateblue bg-transparent font-medium border-slateblue border-2   p-2 rounded-md">

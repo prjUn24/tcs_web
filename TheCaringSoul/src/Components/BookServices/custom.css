@@ -1,0 +1,129 @@
+/* Container styling */
+.option-container, .option-container2, .option-container3 {
+  position: relative;
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 0.375rem;
+}
+
+/* General option styling */
+.option, .option2, .option3, .first {
+  position: relative;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  z-index: 2; /* Base z-index for the text */
+}
+
+/* Container for the text content */
+.option span, .option2 span, .option3 span  , .first span{
+  position: relative;
+  z-index: 2; /* Keep text above the pseudo-element */
+}
+
+/* Active state styling */
+.option.active, .option2.active, .option3.active, .first.active {
+  color: white;
+  border-radius: 0.2rem;
+}
+
+/* Pseudo-element styling */
+.option::before, .option2::before, .option3::before , .first::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4ade80;
+  border-radius: 0.2rem;
+  z-index: -1; /* Place behind the text but above the container */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Show pseudo-element when active */
+.option.active::before, .option2.active::before, .option3.active::before {
+  opacity: 1;
+  animation: slideIn 0.3s forwards;
+}
+
+/* Animation classes */
+.option.clicked-left::before, .option2.clicked-left::before, .option3.clicked-left::before {
+  opacity: 1;
+  animation: slideInLeftToRight 0.3s forwards;
+}
+
+.option.clicked-right::before, .option2.clicked-right::before, .option3.clicked-right::before {
+  opacity: 1;
+  animation: slideInRightToLeft 0.3s forwards;
+}
+
+/* Hover effect */
+.option:hover, .option2:hover, .option3:hover, .first:hover {
+  color: white;
+}
+
+/* Animation keyframes */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeftToRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRightToLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+
+@keyframes slideInFirst {
+  from {
+    transform: translateX(-10%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeftToRightFirst {
+  from {
+    transform: translateX(-10%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+
+.first.active::before {
+  opacity: 1;
+  animation: slideInFirst 0.3s forwards;
+}
+
+/* Animation classes */
+.first.clicked-left::before {
+  opacity: 1;
+  animation: slideInLeftToRightFirst 0.3s forwards;
+}
+
+.first.clicked-right::before {
+  opacity: 1;
+  animation: slideInRightToLeft 0.3s forwards;
+}
