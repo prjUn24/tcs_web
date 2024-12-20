@@ -10,7 +10,7 @@ import bgimg2 from "../../assets/services/bg2.png"
 
 export default function Services() {
   return (
-    <div className="bg-[#F7F7F7] relative z-10 bg-amour lg:bg-transparent">
+    <div className=" relative z-10 bg-amour lg:bg-transparent">
 
       {/* bg cloudimage */}
       
