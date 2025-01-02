@@ -1,4 +1,4 @@
-// Import required modules and Firebase services
+// Auth.js
 import { app } from "./Config";
 import { addUserData, getUserByEmail } from "./Database";
 import { doc, updateDoc } from "firebase/firestore";
@@ -10,156 +10,153 @@ import {
     sendPasswordResetEmail,
     sendEmailVerification,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    onAuthStateChanged
 } from "firebase/auth";
 import Cookies from "js-cookie";
 
 export const auth = getAuth(app);
 
-// Utility function to set authentication token in cookies
-const setAuthToken = (token) => {
-    Cookies.set('authToken', token, {
-        expires: 20, // Expiry in days
-        secure: true,
-        sameSite: 'Strict',
+// Token management
+const setAuthToken = async (user) => {
+    if (user) {
+        const token = await user.getIdToken();
+        Cookies.set('authToken', token, {
+            expires: 20,
+            secure: true,
+            sameSite: 'Strict'
+        });
+    } else {
+        Cookies.remove('authToken');
+    }
+};
+
+// Authentication state observer
+export const initializeAuthListener = (callback) => {
+    return onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            await setAuthToken(user);
+        } else {
+            Cookies.remove('authToken');
+        }
+        callback?.(user);
     });
 };
 
-// 
-// Function to sign up a new user
+// Sign up function
 export const signup = async (registerData) => {
     try {
-        // Check if email already exists in Firestore
         const userExists = await getUserByEmail(registerData.email);
         if (userExists) {
             return {
                 success: false,
-                error: 'This email is already registered. Please use a different email address.'
+                error: 'Email already registered'
             };
         }
 
-        // Create a new user with email and password
-        const userCredential = await createUserWithEmailAndPassword(auth, registerData.email, registerData.password);
+        const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            registerData.email,
+            registerData.password
+        );
 
-        // Create user data object
         const newUserData = {
             uid: userCredential.user.uid,
-            firstName: registerData.firstName,
-            lastName: registerData.lastName,
+            firstname: registerData.firstname || '',
+            lastname: registerData.lastname || '',
             email: registerData.email,
             address: registerData.address || "",
-            phone: registerData.phone || "",
+            number: registerData.number || "",
             emailVerified: false,
             authProvider: 'email',
             createdAt: new Date().toISOString(),
+            lastLogin: new Date().toISOString()
         };
 
-        // Add user to Firestore database
         await addUserData(newUserData);
-
-        // Send email verification
         await sendEmailVerification(userCredential.user);
+        await setAuthToken(userCredential.user);
 
         return {
             success: true,
-            message: 'Account created successfully. Please verify your email before logging in.'
+            message: 'Account created successfully. Please verify your email.'
         };
     } catch (error) {
         console.error('Signup error:', error);
         return {
             success: false,
-            error: error.message,
+            error: error.message
         };
     }
 };
 
-// Function to sign in a user
+// Sign in function
 export const signIn = async (credentials) => {
     try {
         if (!credentials.email || !credentials.password) {
-            return { success: false, error: 'Email and password are required.' };
+            return { success: false, error: 'Email and password required' };
         }
 
-        // Check if user exists in Firestore
-        const existingUser = await getUserByEmail(credentials.email);
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            credentials.email,
+            credentials.password
+        );
 
-        // Sign in with email and password
-        const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
-
-        // Check if email is verified
         if (!userCredential.user.emailVerified) {
-            return { success: false, error: 'Please verify your email before logging in.' };
+            return { 
+                success: false, 
+                error: 'Please verify your email before logging in'
+            };
         }
 
-        // Generate and set authentication token
-        const token = await userCredential.user.getIdToken();
-        setAuthToken(token);
+        // Update last login and any new profile information
+        const userRef = doc(db, "users", userCredential.user.uid);
+        await updateDoc(userRef, {
+            lastLogin: new Date().toISOString(),
+            ...(credentials.firstname && { firstname: credentials.firstname }),
+            ...(credentials.lastname && { lastname: credentials.lastname }),
+            ...(credentials.number && { number: credentials.number }),
+            ...(credentials.address && { address: credentials.address })
+        });
 
-        return { success: true, message: 'Logged in successfully' };
+        await setAuthToken(userCredential.user);
+
+        return { 
+            success: true, 
+            message: 'Logged in successfully'
+        };
     } catch (error) {
         console.error('Sign-in error:', error);
-        return { success: false, error: error.message };
-    }
-};
-
-// Function to resend verification email
-export const resendVerificationEmail = async (email, password) => {
-    try {
-        // Temporarily sign in the user to get user object
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-        // Send verification email
-        await sendEmailVerification(userCredential.user);
-
-        return {
-            success: true,
-            message: 'Verification email has been resent. Please check your inbox.'
+        return { 
+            success: false, 
+            error: error.message 
         };
-    } catch (error) {
-        console.error('Resend verification error:', error);
-        return { success: false, error: error.message };
     }
 };
 
-// Function to handle forgot password flow
-export const forgotPassword = async (email) => {
-    try {
-        // Check if user exists in Firestore
-        const user = await getUserByEmail(email);
-        if (!user) {
-            return { success: false, error: 'No account found with this email address.' };
-        }
-
-        // Send password reset email
-        await sendPasswordResetEmail(auth, email);
-
-        return {
-            success: true,
-            message: 'Password reset email sent. Please check your inbox.'
-        };
-    } catch (error) {
-        console.error('Forgot password error:', error);
-        return { success: false, error: error.message };
-    }
-};
-
-// Function to handle Google Sign-In
+// Google sign in
 export const googleSignIn = async () => {
     const provider = new GoogleAuthProvider();
-
+    
     try {
-        // Sign in using Google popup
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
-        // Check if user exists in Firestore
         const existingUser = await getUserByEmail(user.email);
         if (existingUser) {
             if (existingUser.authProvider !== 'google') {
-                return { success: false, error: 'An account with this email exists. Use email/password to sign in.' };
+                return { 
+                    success: false, 
+                    error: 'Account exists. Use email/password to sign in.'
+                };
             }
+            // Update last login time for existing Google user
+            const userRef = doc(db, "users", user.uid);
+            await updateDoc(userRef, {
+                lastLogin: new Date().toISOString()
+            });
         } else {
-            // Add new Google user to Firestore
             const newUserData = {
                 uid: user.uid,
                 firstName: user.displayName?.split(' ')[0] || '',
@@ -168,46 +165,85 @@ export const googleSignIn = async () => {
                 emailVerified: true,
                 authProvider: 'google',
                 createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
             };
             await addUserData(newUserData);
         }
 
-        // Generate and set authentication token
-        const token = await user.getIdToken();
-        setAuthToken(token);
+        await setAuthToken(user);
 
-        return { success: true, message: 'Logged in successfully with Google' };
+        return { 
+            success: true, 
+            message: 'Logged in successfully with Google'
+        };
     } catch (error) {
         console.error('Google Sign-In error:', error);
-        return { success: false, error: error.message };
+        return { 
+            success: false, 
+            error: error.message 
+        };
     }
 };
 
-
-// Function to verify the reset code and reset the password
-export const verifyCodeAndResetPassword = async (email, verificationCode, newPassword) => {
+// Password reset
+export const forgotPassword = async (email) => {
     try {
-        // Locate the user's document in Firestore
-        const userDoc = await getUserByEmail(email);
-        if (!userDoc) {
-            return { success: false, error: 'No account found with this email address.' };
+        const user = await getUserByEmail(email);
+        if (!user) {
+            return { 
+                success: false, 
+                error: 'No account found with this email'
+            };
         }
 
-        // Verify the provided code (mock example, replace with your logic)
-        if (userDoc.verificationCode !== verificationCode) {
-            return { success: false, error: 'Invalid verification code.' };
-        }
+        await sendPasswordResetEmail(auth, email);
 
-        // Reset the password in Firebase Authentication
-        await auth.currentUser.updatePassword(newPassword);
-
-        // Update the user document to clear the code (optional)
-        const userRef = doc(db, 'users', userDoc.id);
-        await updateDoc(userRef, { verificationCode: null });
-
-        return { success: true, message: 'Password reset successfully.' };
+        return {
+            success: true,
+            message: 'Password reset email sent'
+        };
     } catch (error) {
         console.error('Password reset error:', error);
-        return { success: false, error: error.message };
+        return { 
+            success: false, 
+            error: error.message 
+        };
+    }
+};
+
+// Resend verification email
+export const resendVerificationEmail = async (email, password) => {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(userCredential.user);
+
+        return {
+            success: true,
+            message: 'Verification email sent'
+        };
+    } catch (error) {
+        console.error('Verification email error:', error);
+        return { 
+            success: false, 
+            error: error.message 
+        };
+    }
+};
+
+// Sign out
+export const signOut = async () => {
+    try {
+        await auth.signOut();
+        Cookies.remove('authToken');
+        return { 
+            success: true, 
+            message: 'Signed out successfully'
+        };
+    } catch (error) {
+        console.error('Sign out error:', error);
+        return { 
+            success: false, 
+            error: error.message 
+        };
     }
 };

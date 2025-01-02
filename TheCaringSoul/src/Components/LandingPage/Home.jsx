@@ -61,10 +61,10 @@ export default function Home() {
 
 
             <div className="relative hidden xl:flex -mt-12">
-              <div className="w-96 absolute z-30 right-12  -top-3 ">
+              <div className="w-96 absolute right-12  -top-3 ">
                 <img src={image} className="h-96 w-96" alt="" />
               </div>
-              <div className="w-96 absolute z-30 right-20  -top-16 ">
+              <div className="w-96 absolute right-20  -top-16 ">
                 <img src={image} className="h-96 " alt="" />
               </div>
             </div>
