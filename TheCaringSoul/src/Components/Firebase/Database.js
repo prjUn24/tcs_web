@@ -1,3 +1,4 @@
+// Database.js
 import {
     getFirestore,
     collection,
@@ -6,16 +7,15 @@ import {
     getDocs,
     updateDoc,
     deleteDoc,
-    getDoc,
     query,
     where
 } from "firebase/firestore";
 import { app } from "./Config";
 
 export const db = getFirestore(app);
+
 export const addUserData = async (userData) => {
     try {
-        // Remove the email verification check
         console.log('Adding user data:', userData);
         const userRef = doc(db, 'users', userData.uid);
         await setDoc(userRef, userData);
@@ -33,6 +33,7 @@ export const addUserData = async (userData) => {
         };
     }
 };
+
 export const getUserList = async (setUserList, setMessage, message) => {
     try {
         const users = [];
@@ -64,7 +65,7 @@ export const getUserList = async (setUserList, setMessage, message) => {
 
 export const upDateUser = async (obj, setMessage, message) => {
     try {
-        const userRef = doc(db, "users", obj.uid); 
+        const userRef = doc(db, "users", obj.uid);
         await updateDoc(userRef, obj);
 
         return setMessage({
@@ -85,7 +86,7 @@ export const upDateUser = async (obj, setMessage, message) => {
 
 export const deleteUser = async (uid, setMessage, message) => {
     try {
-        const userRef = doc(db, "users", uid); 
+        const userRef = doc(db, "users", uid);
         await deleteDoc(userRef);
 
         return setMessage({
@@ -104,7 +105,6 @@ export const deleteUser = async (uid, setMessage, message) => {
     }
 };
 
-
 export const getUserByEmail = async (email) => {
     try {
         const usersRef = collection(db, 'users');
@@ -115,7 +115,6 @@ export const getUserByEmail = async (email) => {
             return null;
         }
         
-        // Return the first matching document
         const userDoc = querySnapshot.docs[0];
         return {
             uid: userDoc.id,
