@@ -4,7 +4,6 @@ import Home from "./Home";
 import Navbar from "./Navbar";
 import Services from "./Services";
 import FAQ from "./FAQ";
-import Footer from "./Footer";
 
 
 export default function MainContainer() {
@@ -15,7 +14,6 @@ export default function MainContainer() {
       <About />
       <Services />
       <FAQ/>
-      <Footer/>
       
       
     </div>
