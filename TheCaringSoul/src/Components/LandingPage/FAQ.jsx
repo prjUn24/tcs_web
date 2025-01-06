@@ -48,7 +48,7 @@ export default function FAQ() {
     <>
       <div className="font-proxima bg-[#F8E8F5] bg-[url('/src/assets/FAQ_mobilebg.png')] md:bg-[url('/src/assets/FAQ_bg.jpg')] bg-center bg-no-repeat bg-cover">
         <center>
-          <h1 className="text-4xl text-[#567A9B] font-medium p-6 pt-20">FAQs</h1>
+          <h1 className="text-4xl text-[#567A9B] font-medium p-6">FAQs</h1>
           <h2 className="text-4xl text-[#8a868f] font-medium p-6 md:hidden">
             Most Frequently Asked Questions
           </h2>
